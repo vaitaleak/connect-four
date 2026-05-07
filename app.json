@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Connect Four",
+    "slug": "connect-four",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "android": {
+      "package": "com.usefullapps.connectfour",
+      "versionCode": 1
+    }
+  }
+}
