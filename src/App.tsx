@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import React, { useState, useCallback } from 'react';
 import {
   StyleSheet, View, Text, TouchableOpacity, Dimensions,
@@ -203,6 +204,7 @@ export default function App() {
           </TouchableOpacity>
         </View>
       )}
+    <StatusBar style="light" />
     </SafeAreaView>
   );
 }

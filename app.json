@@ -1,7 +1,21 @@
 {
-  "name": "connectfour",
-  "displayName": "Connect Four",
-  "android": {
-    "package": "com.usefullapps.connectfour"
+  "expo": {
+    "name": "Connect Four",
+    "slug": "connect-four",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.usefullapps.connectfour",
+      "versionCode": 1
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
