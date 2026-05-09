@@ -3,7 +3,6 @@ import {
   StyleSheet, View, Text, TouchableOpacity, Dimensions,
   SafeAreaView,
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 
 const COLS = 7;
 const ROWS = 6;
@@ -145,7 +144,6 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
       <Text style={styles.title}>Connect Four</Text>
 
       <View style={styles.modeRow}>
