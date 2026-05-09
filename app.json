@@ -1,5 +1,5 @@
 {
-  "name": "Connect Four",
+  "name": "connectfour",
   "displayName": "Connect Four",
   "android": {
     "package": "com.usefullapps.connectfour"
