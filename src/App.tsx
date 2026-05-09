@@ -29,25 +29,25 @@ function dropPiece(b: Board, col: number, player: 'R' | 'Y'): { board: Board; ro
   return null;
 }
 
-function checkWin(b: Board, row: number, col: number): boolean {
+function checkWin(b: Board, row: number, col: number): Set<number> | null {
   const p = getCell(b, row, col);
-  if (!p) return false;
+  if (!p) return null;
   const dirs = [[0,1],[1,0],[1,1],[1,-1]];
   for (const [dr, dc] of dirs) {
-    let count = 1;
+    const cells = new Set<number>([row * COLS + col]);
     for (let d = 1; d < 4; d++) {
       const nr = row + dr * d, nc = col + dc * d;
-      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && getCell(b, nr, nc) === p) count++;
+      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && getCell(b, nr, nc) === p) cells.add(nr * COLS + nc);
       else break;
     }
     for (let d = 1; d < 4; d++) {
       const nr = row - dr * d, nc = col - dc * d;
-      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && getCell(b, nr, nc) === p) count++;
+      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && getCell(b, nr, nc) === p) cells.add(nr * COLS + nc);
       else break;
     }
-    if (count >= 4) return true;
+    if (cells.size >= 4) return cells;
   }
-  return false;
+  return null;
 }
 
 function isDraw(b: Board): boolean {
@@ -71,6 +71,10 @@ function aiMove(b: Board): number {
   for (const c of order) {
     if (getCell(b, 0, c) === null) return c;
   }
+  // Fallback: find any non-full column
+  for (let c = 0; c < COLS; c++) {
+    if (getCell(b, 0, c) === null) return c;
+  }
   return 0;
 }
 
@@ -90,9 +94,11 @@ export default function App() {
     if (!result) return;
 
     const { board: newBoard, row } = result;
-    if (checkWin(newBoard, row, col)) {
+    const winResult = checkWin(newBoard, row, col);
+    if (winResult) {
       setBoard(newBoard);
       setWinner(current);
+      setWinCells(winResult);
       if (current === 'R') setScoreR(s => s + 1);
       else setScoreY(s => s + 1);
       return;
@@ -113,9 +119,11 @@ export default function App() {
         const aiCol = aiMove(newBoard);
         const aiResult = dropPiece(newBoard, aiCol, 'Y');
         if (!aiResult) return;
-        if (checkWin(aiResult.board, aiResult.row, aiCol)) {
+        const aiWinResult = checkWin(aiResult.board, aiResult.row, aiCol);
+        if (aiWinResult) {
           setBoard(aiResult.board);
           setWinner('Y');
+          setWinCells(aiWinResult);
           setScoreY(s => s + 1);
         } else if (isDraw(aiResult.board)) {
           setBoard(aiResult.board);
@@ -132,6 +140,7 @@ export default function App() {
     setBoard(createBoard());
     setPlayer('R');
     setWinner(null);
+    setWinCells(new Set());
   }, []);
 
   return (
@@ -178,8 +187,9 @@ export default function App() {
           {Array.from({ length: ROWS * COLS }, (_, i) => {
             const r = Math.floor(i / COLS), c = i % COLS;
             const cell = getCell(board, r, c);
+            const isWin = winCells.has(i);
             return (
-              <View key={i} style={styles.cell}>
+              <View key={i} style={[styles.cell, isWin && styles.cellWin]}>
                 {cell && <View style={[styles.piece, cell === 'R' ? styles.red : styles.yellow]} />}
               </View>
             );
@@ -219,7 +229,8 @@ const styles = StyleSheet.create({
   dropIndicator: { width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: 'transparent' },
   boardOuter: { backgroundColor: '#2980b9', borderRadius: 12, padding: 6 },
   board: { flexDirection: 'row', flexWrap: 'wrap', width: COLS * CELL, height: ROWS * CELL },
-  cell: { width: CELL, height: CELL, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2471a3', margin: 1, borderRadius: CELL / 2 },
+  cell: { width: CELL, height: CELL, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2471a3', borderRadius: CELL / 2 },
+  cellWin: { backgroundColor: '#1abc9c' },
   piece: { width: PIECE, height: PIECE, borderRadius: PIECE / 2 },
   red: { backgroundColor: '#e74c3c' },
   yellow: { backgroundColor: '#f1c40f' },
