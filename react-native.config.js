@@ -1,7 +1,11 @@
 module.exports = {
   project: {
     android: {
-      unstable_reactLegacyComponentNames: ['RCTImageView'],
+      packageName: 'com.usefullapps.connectfour',
+      sourceDir: './android',
+      appName: 'connectfour',
+      manifestPath: './app/src/main/AndroidManifest.xml',
     },
+    ios: {},
   },
 };
